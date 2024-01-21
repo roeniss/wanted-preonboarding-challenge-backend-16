@@ -8,16 +8,16 @@ spring:
     password: backend
     driver-class-name: com.mysql.cj.jdbc.Driver
 
-  # JPA ??
   jpa:
+    database-platform: org.hibernate.dialect.MySQLDialect
     hibernate:
-      ddl-auto: none        # DB ??? ?? (none, create, create-drop, update, validate)
+      ddl-auto: create-drop  # TODO: change to `update` later
     properties:
       hibernate:
-        auto_quote_keyword: false
-        globally_quoted_identifiers: false
-        format_sql: true      # ?? ?? ?? (??)
-        show_sql: true        # ?? ?? ??
+        auto_quote_keyword: true
+        globally_quoted_identifiers: true
+        format_sql: true
+        show_sql: true
 
 logging:
   level:
