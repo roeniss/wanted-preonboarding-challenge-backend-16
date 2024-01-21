@@ -1,5 +1,10 @@
 server:
   port: 8016
+  error:
+    include-binding-errors: always
+    include-exception: true
+    include-message: always
+    include-stacktrace: always
 
 spring:
   datasource:
