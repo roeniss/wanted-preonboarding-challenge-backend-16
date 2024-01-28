@@ -1,11 +1,11 @@
 package com.wanted.preonboarding.core.api;
 
 public record ReserveRequest(
-        String name,
-        String phone,
-        Long balance,
+        String reserverName,
+        String reserverPhone,
+        Long reserverBalance,
         Long performanceId,
-        Long round,
-        String seat
+        Long performanceRound,
+        String performanceSeat
 ) {
 }

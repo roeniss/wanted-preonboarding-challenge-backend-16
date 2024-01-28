@@ -14,8 +14,8 @@ public class ReserveController {
     @PostMapping("/api/v1/performances/reserve")
     public ResponseWrapper<ReserveResponse> reserve(@Valid @RequestBody ReserveRequest req) {
         return ResponseWrapper.created(new ReserveResponseBuilder()
-                .setPerformance(req.round(), req.performanceId().toString(), req.seat(), req.performanceId()) // TODO: find performanceName
-                .setReserver(req.name(), req.phone())
+                .setPerformance(req.performanceRound(), req.performanceId().toString(), req.performanceSeat(), req.performanceId()) // TODO: find performanceName
+                .setReserver(req.reserverName(), req.reserverPhone())
                 .build());
     }
 }
