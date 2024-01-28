@@ -1,5 +1,9 @@
-package com.wanted.preonboarding.core.api;
+package com.wanted.preonboarding.core.api.controller;
 
+import com.wanted.preonboarding.core.api.ReserveRequest;
+import com.wanted.preonboarding.core.api.ReserveResponse;
+import com.wanted.preonboarding.core.api.ReserveResponseBuilder;
+import com.wanted.preonboarding.core.api.ResponseWrapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
@@ -23,7 +27,7 @@ class ReserveControllerTest {
         ));
 
         // then
-        assertEquals(response.statusCode(), HttpStatus.CREATED);
+        assertEquals(HttpStatus.CREATED, response.statusCode());
     }
 
     @Test
@@ -42,8 +46,8 @@ class ReserveControllerTest {
         ));
 
         // then
-        assertEquals(response.data().reserver().name(), "홍길동");
-        assertEquals(response.data().reserver().phone(), "010-1234-5678");
+        ReserveResponse expected = new ReserveResponseBuilder().setReserver("홍길동", "010-1234-5678").build();
+        assertEquals(expected.reserver(), response.data().reserver());
     }
 
     @Test
@@ -62,9 +66,7 @@ class ReserveControllerTest {
         ));
 
         // then
-        assertEquals(response.data().performance().round(), 1L);
-        assertEquals(response.data().performance().performanceName(), "1");
-        assertEquals(response.data().performance().seat(), "A1");
-        assertEquals(response.data().performance().performanceId(), 1L);
+        ReserveResponse expected = new ReserveResponseBuilder().setPerformance(1L, "1", "A1", 1L).build();
+        assertEquals(expected.performance(), response.data().performance());
     }
 }
