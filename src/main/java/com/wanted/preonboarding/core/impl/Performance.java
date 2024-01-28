@@ -1,12 +1,16 @@
 package com.wanted.preonboarding.core.impl;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.proxy.HibernateProxy;
 
 import java.time.Instant;
+import java.util.LinkedHashSet;
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -29,6 +33,10 @@ public class Performance {
     @Column(name = "round", nullable = false)
     private int round;
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "performance", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Set<PerformanceSeatInfo> seats = new LinkedHashSet<>();
+
     @Enumerated(EnumType.STRING)
     @Column(name = "type", nullable = false)
     private PerformanceType type;
@@ -37,10 +45,6 @@ public class Performance {
     @Column(name = "start_date", nullable = false)
     private Instant startDate;
 
-    @Comment("자리 점유 여부")
-    @Column(name = "is_reserve", nullable = false)
-    private boolean isReserve;
-
     @CreationTimestamp
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
@@ -48,6 +52,11 @@ public class Performance {
     @UpdateTimestamp
     @Column(name = "updated_at", nullable = false)
     private Instant updatedAt;
+
+    public void addSeat(PerformanceSeatInfo seat) {
+        seats.add(seat);
+        seat.setPerformance(this);
+    }
 
     public UUID getId() {
         return id;
@@ -81,6 +90,14 @@ public class Performance {
         this.round = round;
     }
 
+    public Set<PerformanceSeatInfo> getSeats() {
+        return seats;
+    }
+
+    public void setSeats(Set<PerformanceSeatInfo> seats) {
+        this.seats = seats;
+    }
+
     public PerformanceType getType() {
         return type;
     }
@@ -95,14 +112,6 @@ public class Performance {
 
     public void setStartDate(Instant startDate) {
         this.startDate = startDate;
-    }
-
-    public boolean isReserve() {
-        return isReserve;
-    }
-
-    public void setReserve(boolean reserve) {
-        isReserve = reserve;
     }
 
     public Instant getCreatedAt() {
@@ -122,30 +131,19 @@ public class Performance {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public final boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Performance that)) return false;
-        return getPrice() == that.getPrice() && getRound() == that.getRound() && isReserve() == that.isReserve() && Objects.equals(getId(), that.getId()) && Objects.equals(getName(), that.getName()) && getType() == that.getType() && Objects.equals(getStartDate(), that.getStartDate()) && Objects.equals(getCreatedAt(), that.getCreatedAt()) && Objects.equals(getUpdatedAt(), that.getUpdatedAt());
+        if (o == null) return false;
+        Class<?> oEffectiveClass = o instanceof HibernateProxy ? ((HibernateProxy) o).getHibernateLazyInitializer().getPersistentClass() : o.getClass();
+        Class<?> thisEffectiveClass = this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass() : this.getClass();
+        if (thisEffectiveClass != oEffectiveClass) return false;
+        Performance that = (Performance) o;
+        return getId() != null && Objects.equals(getId(), that.getId());
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(getId(), getName(), getPrice(), getRound(), getType(), getStartDate(), isReserve(), getCreatedAt(), getUpdatedAt());
-    }
-
-    @Override
-    public String toString() {
-        return "Performance{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", price=" + price +
-                ", round=" + round +
-                ", type=" + type +
-                ", startDate=" + startDate +
-                ", isReserve=" + isReserve +
-                ", createdAt=" + createdAt +
-                ", updatedAt=" + updatedAt +
-                '}';
+    public final int hashCode() {
+        return this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass().hashCode() : getClass().hashCode();
     }
 }
 

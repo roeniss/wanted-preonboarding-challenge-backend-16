@@ -22,10 +22,9 @@ public class ReservationFinder {
         return new Reservation(
                 entity.getName(),
                 entity.getPhoneNumber(),
-                entity.getPerformanceId().toString(),
-                "TODO",
-                entity.getRound(),
-                entity.getLine() + ":" + entity.getSeat()
-        );
+                entity.getPerformanceSeatInfo().getPerformance().getId(),
+                entity.getPerformanceSeatInfo().getPerformance().getName(),
+                entity.getPerformanceSeatInfo().getPerformance().getRound(),
+                entity.getPerformanceSeatInfo().getSeat() + ":" + entity.getPerformanceSeatInfo().getLine());
     }
 }

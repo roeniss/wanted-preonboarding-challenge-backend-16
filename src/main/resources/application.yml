@@ -8,15 +8,15 @@ server:
 
 spring:
   datasource:
-    url: jdbc:mysql://localhost:13306/wanted
-    username: wanted
-    password: backend
+    url: jdbc:mysql://127.0.0.1:13306/wanted
+    username: root
+    password: preonboarding
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
     database-platform: org.hibernate.dialect.MySQLDialect
     hibernate:
-      ddl-auto: create-drop  # TODO: change to `update` later
+      ddl-auto: create  # TODO: change to `update` later
     properties:
       hibernate:
         auto_quote_keyword: true

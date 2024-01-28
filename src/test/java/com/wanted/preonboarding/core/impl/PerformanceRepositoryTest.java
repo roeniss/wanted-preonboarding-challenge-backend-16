@@ -7,10 +7,8 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
-import java.time.Instant;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import static com.wanted.preonboarding.core.impl.DummyEntityFactory.createSamplePerformance;
+import static com.wanted.preonboarding.core.impl.DummyEntityFactory.createSamplePerformanceSeatInfo;
 
 
 @DataJpaTest
@@ -23,49 +21,28 @@ class PerformanceRepositoryTest {
     private TestEntityManager tem;
 
     @Test
-    void save_performance_entity_correctly() {
-        var entity = new Performance();
-        UUID uuid = UUID.randomUUID();
-        entity.setName("공연");
-        entity.setPrice(10000);
-        entity.setRound(1);
-        entity.setType(PerformanceType.CONCERT);
-        entity.setStartDate(Instant.now());
-        entity.setReserve(false);
-        sut.save(entity);
+    void save_performance_entity() {
+        var performance = createSamplePerformance();
 
-        tem.flush();
+        Performance result = tem.persistFlushFind(performance);
 
-        List<Performance> result = sut.findAll();
-
-        int size = result.size();
-        Assertions.assertThat(size).isEqualTo(1);
-        Assertions.assertThat(result.getFirst().getId()).isNotNull();
-        Assertions.assertThat(result.getFirst().getName()).isEqualTo("공연");
-        Assertions.assertThat(result.getFirst().getPrice()).isEqualTo(10000);
-        Assertions.assertThat(result.getFirst().getRound()).isEqualTo(1);
-        Assertions.assertThat(result.getFirst().getType()).isEqualTo(PerformanceType.CONCERT);
-        Assertions.assertThat(result.getFirst().getStartDate()).isNotNull();
-        Assertions.assertThat(result.getFirst().isReserve()).isEqualTo(false);
+        Assertions.assertThat(result.getId()).isNotNull();
+        Assertions.assertThat(result.getName()).isEqualTo("공연");
+        Assertions.assertThat(result.getPrice()).isEqualTo(10000);
+        Assertions.assertThat(result.getRound()).isEqualTo(1);
+        Assertions.assertThat(result.getType()).isEqualTo(PerformanceType.CONCERT);
+        Assertions.assertThat(result.getStartDate()).isNotNull();
     }
 
     @Test
-    void print_performance_without_circulr_reference() {
-        var entity = new Performance();
-        UUID uuid = UUID.randomUUID();
-        entity.setName("공연");
-        entity.setPrice(10000);
-        entity.setRound(1);
-        entity.setType(PerformanceType.CONCERT);
-        entity.setStartDate(Instant.now());
-        entity.setReserve(false);
-        sut.save(entity);
+    void lazy_fetch_on_seats() { // TODO: query count 검증을 (눈으로 체크하는 대신) 자동화
+        var performance = createSamplePerformance();
+        performance.addSeat(createSamplePerformanceSeatInfo('A'));
+        performance.addSeat(createSamplePerformanceSeatInfo('B'));
+        performance.addSeat(createSamplePerformanceSeatInfo('C'));
 
-        tem.flush();
+        Performance result = tem.persistFlushFind(performance);
 
-        List<Performance> result = sut.findAll();
-
-        System.out.println(Arrays.toString(result.toArray()));
-
+        System.out.println(result.getSeats());
     }
 }

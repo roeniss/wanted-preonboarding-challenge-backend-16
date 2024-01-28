@@ -7,9 +7,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import static com.wanted.preonboarding.core.impl.DummyEntityFactory.*;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
@@ -21,48 +19,37 @@ class ReservationRepositoryTest {
     private TestEntityManager tem;
 
     @Test
-    void save_reservation_entity_correctly() {
-        var entity = new Reservation();
-        UUID uuid = UUID.randomUUID();
-        entity.setName("홍길동");
-        entity.setPhoneNumber("010-1234-5678");
-        entity.setPerformanceId(uuid);
-        entity.setRound(1);
-        entity.setGate(2);
-        entity.setLine('A');
-        entity.setSeat(3);
-        sut.save(entity);
+    void save_reservation_entity() {
+        var performance = createSamplePerformance();
+        var seat = createSamplePerformanceSeatInfo('A');
+        var reservation = createSampleReservation();
+        performance.addSeat(seat);
+        seat.reserve(reservation);
 
-        tem.flush();
+        Performance savedPerformance = tem.persistFlushFind(performance);
 
-        List<Reservation> result = sut.findAll();
+        var result = savedPerformance.getSeats().stream().findFirst().get().getReservation();
 
-        int size = result.size();
-        Assertions.assertThat(size).isEqualTo(1);
-        Assertions.assertThat(result.getFirst().getName()).isEqualTo("홍길동");
-        Assertions.assertThat(result.getFirst().getPhoneNumber()).isEqualTo("010-1234-5678");
-        Assertions.assertThat(result.getFirst().getPerformanceId()).isEqualTo(uuid);
-        Assertions.assertThat(result.getFirst().getRound()).isEqualTo(1);
-        Assertions.assertThat(result.getFirst().getGate()).isEqualTo(2);
-        Assertions.assertThat(result.getFirst().getLine()).isEqualTo('A');
-        Assertions.assertThat(result.getFirst().getSeat()).isEqualTo(3);
+        Assertions.assertThat(result.getName()).isEqualTo("홍길동");
+        Assertions.assertThat(result.getPhoneNumber()).isEqualTo("010-1234-5678");
     }
 
     @Test
-    void print_reservation_without_circulr_reference() {
-        var entity = new Reservation();
-        UUID uuid = UUID.randomUUID();
-        entity.setName("홍길동");
-        entity.setPhoneNumber("010-1234-5678");
-        entity.setPerformanceId(uuid);
-        entity.setRound(1);
-        entity.setGate(2);
-        entity.setLine('A');
-        entity.setSeat(3);
-        sut.save(entity);
+    void eager_fetch_on_performance_seat_info() { // TODO: query count 검증을 (눈으로 체크하는 대신) 자동화
+        var performance = createSamplePerformance();
+        var seat = createSamplePerformanceSeatInfo('A');
+        var reservation = createSampleReservation();
+        performance.addSeat(seat);
+        seat.reserve(reservation);
 
-        List<Reservation> result = sut.findAll();
+        tem.persistAndFlush(performance);
+        tem.detach(performance);
+        tem.detach(seat);
+        tem.detach(reservation);
 
-        System.out.println(Arrays.toString(result.toArray()));
+        var result = tem.find(Reservation.class, reservation.getId());
+
+        System.out.println(result.getPerformanceSeatInfo());
     }
+
 }
