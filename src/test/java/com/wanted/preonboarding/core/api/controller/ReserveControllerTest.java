@@ -20,9 +20,9 @@ class ReserveControllerTest {
         ResponseWrapper<ReserveResponse> response = sut.reserve(new ReserveRequest(
                 "홍길동",
                 "010-1234-5678",
-                10000L,
-                1L,
-                1L,
+                10000,
+                1,
+                1,
                 "A1"
         ));
 
@@ -39,9 +39,9 @@ class ReserveControllerTest {
         ResponseWrapper<ReserveResponse> response = sut.reserve(new ReserveRequest(
                 "홍길동",
                 "010-1234-5678",
-                10000L,
-                1L,
-                1L,
+                10000,
+                1,
+                1,
                 "A1"
         ));
 
@@ -59,14 +59,14 @@ class ReserveControllerTest {
         ResponseWrapper<ReserveResponse> response = sut.reserve(new ReserveRequest(
                 "홍길동",
                 "010-1234-5678",
-                10000L,
-                1L,
-                1L,
+                10000,
+                1,
+                1,
                 "A1"
         ));
 
         // then
-        ReserveResponse expected = new ReserveResponseBuilder().setPerformance(1L, "1", "A1", 1L).build();
+        ReserveResponse expected = new ReserveResponseBuilder().setPerformance(1, "1", "A1", 1).build();
         assertEquals(expected.performance(), response.data().performance());
     }
 }

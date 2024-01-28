@@ -6,10 +6,10 @@ public record ReserveResponse(
 ) {
 
     record Performance(
-            Long round,
+            int round,
             String performanceName,
             String seat,
-            Long performanceId
+            int performanceId
     ) {
     }
 

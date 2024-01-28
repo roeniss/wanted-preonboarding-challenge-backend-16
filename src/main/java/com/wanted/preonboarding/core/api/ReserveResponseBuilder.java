@@ -5,10 +5,10 @@ public class ReserveResponseBuilder {
     private ReserveResponse.Reserver reserver;
 
     public ReserveResponseBuilder setPerformance(
-            Long round,
+            int round,
             String performanceName,
             String seat,
-            Long performanceId) {
+            int performanceId) {
         this.performance = new ReserveResponse.Performance(round, performanceName, seat, performanceId);
         return this;
     }
