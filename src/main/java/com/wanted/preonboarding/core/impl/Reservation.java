@@ -59,9 +59,6 @@ public class Reservation {
     @Column(name = "updated_at", nullable = false)
     private Instant updatedAt;
 
-    protected Reservation() {
-    }
-
     public Integer getId() {
         return id;
     }
